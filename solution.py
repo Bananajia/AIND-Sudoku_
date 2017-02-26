@@ -119,17 +119,19 @@ def naked_twins(values):
         while j<len(twins_values):
             if values[twins_values[j]]==values[twins_values[i]] and twins_values[j] in units[twins_values[i]]:
                 for unit_s in units[twins_values[i]]:
-                    if unit_s != twins_values[j]:
+					for peers in unit_s:
+						if peers != twins_values[j]:
                         # or peer != twins_values[i]:
                         # print(peer,twins_values[i],twins_values[j])
-                        for digit in values[twins_values[i]]:
-                            values[unit_s] = values[unit_s].replace(digit, '')
+							for digit in values[twins_values[i]]:
+								values[peers] = values[peers].replace(digit, '')
                 for unit_s in units[twins_values[j]]:
-                    if unit_s != twins_values[i]:
-                    # or peer != twins_values[i]:
-                    #print(peer,twins_values[i],twins_values[j])
-                        for digit in values[twins_values[i]]:
-                            values[unit_s] = values[unit_s].replace(digit, '')
+					for peers in unit_s:
+						if peers != twins_values[i]:
+                        # or peer != twins_values[i]:
+                        # print(peer,twins_values[i],twins_values[j])
+							for digit in values[twins_values[j]]:
+								values[peers] = values[peers].replace(digit, '')
 
             j=j+1;
         i=i+1;
