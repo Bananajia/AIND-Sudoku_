@@ -3,7 +3,7 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: Like only_choice, this one is find the condidates which only has 2 elements. Put their key in the list, when we travel the list, we compare if its peers' values are same. If they has one same twins, it means we need kill peers which include the values except these two.
+A: Like only_choice, this one is find the condidates which only has 2 elements. Put their key in the list, when we travel the list, we compare if its peers' values are same. If they has one same twins, it means we need kill peers which include the values except these two. The first step is that find the boxes which have two elements, that is the possible naked_twins. The second step is that we need to find these poteintial twins which are actually in the same units, that means they need to be peers. We can use the constrain to find the naked twins, and when other peers of them are more than two elements, we can estimate the elements of twins in these peers.s  
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
