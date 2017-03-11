@@ -26,9 +26,11 @@ column_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
 diagonal_units = [['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8', 'I9'],['A9', 'B8', 'C7', 'D6', 'E5', 'F4', 'G3', 'H2', 'I1']]
 unitlist = row_units + column_units + square_units + diagonal_units
-#unitlist = row_units + column_units + square_units
+twins_unitlist = row_units + column_units + square_units
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)	
+twins_units = dict((s, [u for u in twins_unitlist if s in u]) for s in boxes)
+twins_peers = dict((s, set(sum(twins_units[s],[]))-set([s])) for s in boxes)	
 	
 def grid_values(grid):
     """
@@ -109,44 +111,39 @@ def naked_twins(values):
     # Eliminate the naked twins as possibilities for their peers
     #print("-----------------twins benging---------------------------")
     #display(values)
+    two_values=[]
     twins_values=[]
+    same_peers=[]
     for keys in values:
         if len(values[keys])==2:
-            twins_values.append(keys)
-    i=0;
-    while i<len(twins_values):
-        j=i+1;
-        while j<len(twins_values):
-            if values[twins_values[j]]==values[twins_values[i]] and twins_values[j] in units[twins_values[i]]:
-                for unit_s in units[twins_values[i]]:
-					for peers in unit_s:
-						if peers != twins_values[j]:
-                        # or peer != twins_values[i]:
-                        # print(peer,twins_values[i],twins_values[j])
-							for digit in values[twins_values[i]]:
-								values[peers] = values[peers].replace(digit, '')
-                for unit_s in units[twins_values[j]]:
-					for peers in unit_s:
-						if peers != twins_values[i]:
-                        # or peer != twins_values[i]:
-                        # print(peer,twins_values[i],twins_values[j])
-							for digit in values[twins_values[j]]:
-								values[peers] = values[peers].replace(digit, '')
+            two_values.append(keys)
+    for v1 in two_values:
+    	for v2 in two_values:
+	        if v2 in peers[v1]:
+	            if values[v2]==values[v1] and (v2,v1) not in twins_values:
+	    	        twins_values.append((v1,v2))
 
-            j=j+1;
-        i=i+1;
-    #print("-----------------twins later---------------------------")
-    #display(values)
+    for i in range(len(twins_values)):
+        peers1 = peers[twins_values[i][0]]
+        peers2 = peers[twins_values[i][1]]
+        for peer in peers1:
+            if peer in peers2:
+                #this is important, because if the elements are less than 2, it will be disappear eventually
+                if len(values[peer]) > 2:
+                    for element in values[twins_values[i][0]]:
+                        values[peer] = values[peer].replace(element, '')
     return values
-    pass	
-	
+
+
+    
 def reduce_puzzle(values):
     solved_values = [box for box in values.keys() if len(values[box]) == 1]
     stalled = False
     while not stalled:
         solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
-        values = naked_twins(values)
         values = eliminate(values)
+        values = naked_twins(values)
+        
         values = only_choice(values)
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         stalled = solved_values_before == solved_values_after
